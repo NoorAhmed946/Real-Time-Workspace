@@ -1,0 +1,22 @@
+# --- Python Specific ---
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+env/
+.venv/
+
+# --- Environment Variables (CRITICAL) ---
+.env
+
+# --- Database & OS ---
+*.db
+*.sqlite3
+.DS_Store
+Thumbs.db
+
+# --- Frontend (If you have it in same repo) ---
+node_modules/
+dist/
+build/
+.next/
