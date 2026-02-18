@@ -19,7 +19,6 @@ from sqlalchemy.dialects.postgresql import INET, UUID
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 from sqlalchemy.sql import func
 
-
 class Base(DeclarativeBase):
     """Base class for all models with common configurations."""
     pass
