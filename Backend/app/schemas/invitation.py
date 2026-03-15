@@ -49,3 +49,11 @@ class InvitationListResponse(BaseModel):
     """List of invitations."""
     invitations: list[InvitationRead]
     total: int
+
+
+class InvitationActionResult(BaseModel):
+    """Standard response for invitation actions (accept/decline/cancel)."""
+    success: bool
+    message: str
+    role: Optional[str] = None
+    document_id: Optional[UUID] = None

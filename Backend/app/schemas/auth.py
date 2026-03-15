@@ -1,4 +1,8 @@
 """Authentication-related Pydantic schemas."""
+from datetime import datetime
+from typing import Optional
+from uuid import UUID
+
 from pydantic import BaseModel
 
 
@@ -32,3 +36,20 @@ class TokenVerifyResponse(BaseModel):
     valid: bool
     user_id: str | None = None
     expires_at: int | None = None
+
+
+class LogoutResponse(BaseModel):
+    """Standard response for logout operations."""
+    success: bool
+    message: str
+    devices_logged_out: Optional[int] = None
+
+
+class CurrentUserInfo(BaseModel):
+    """Current authenticated user's basic profile."""
+    id: UUID
+    email: str
+    display_name: str
+    avatar_url: Optional[str] = None
+    created_at: datetime
+    last_login_at: Optional[datetime] = None

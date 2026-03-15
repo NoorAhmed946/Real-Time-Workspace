@@ -23,6 +23,7 @@ from app.schemas.document import (
     DocumentPermissionCreate,
     DocumentPermissionRead,
     DocumentListResponse,
+    DocumentStateResponse,
 )
 from app.services.document import document_service
 
@@ -298,7 +299,7 @@ async def revoke_permission(
 # CRDT State (for WebSocket sync)
 # ==================
 
-@router.get("/{document_id}/state")
+@router.get("/{document_id}/state", response_model=DocumentStateResponse)
 async def get_document_state(
     document_id: UUID,
     current_user: CurrentUser,
@@ -322,8 +323,8 @@ async def get_document_state(
     
     crdt_state, version = result
     
-    return {
-        "document_id": str(document_id),
-        "version": version,
-        "state": base64.b64encode(crdt_state).decode() if crdt_state else None,
-    }
+    return DocumentStateResponse(
+        document_id=document_id,
+        version=version,
+        state=base64.b64encode(crdt_state).decode() if crdt_state else None,
+    )

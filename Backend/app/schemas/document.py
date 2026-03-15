@@ -76,3 +76,10 @@ class DocumentListResponse(BaseModel):
     page: int
     page_size: int
     has_more: bool
+
+
+class DocumentStateResponse(BaseModel):
+    """CRDT state payload for a document."""
+    document_id: UUID
+    version: int
+    state: Optional[str] = None

@@ -14,6 +14,7 @@ from app.schemas.invitation import (
     InvitationResponse,
     InvitationWithDetails,
     InvitationListResponse,
+    InvitationActionResult,
 )
 from app.services.invitation import invitation_service
 from app.services.document import document_service
@@ -175,7 +176,7 @@ async def get_invitation(
 # Respond to Invitations
 # ==================
 
-@router.post("/{invitation_id}/respond")
+@router.post("/{invitation_id}/respond", response_model=InvitationActionResult)
 async def respond_to_invitation(
     invitation_id: UUID,
     response: InvitationResponse,
@@ -216,21 +217,21 @@ async def respond_to_invitation(
         permission = await invitation_service.accept_invitation(
             db, invitation, current_user.id
         )
-        return {
-            "success": True,
-            "message": "Invitation accepted",
-            "role": permission.role.value,
-            "document_id": str(invitation.document_id),
-        }
+        return InvitationActionResult(
+            success=True,
+            message="Invitation accepted",
+            role=permission.role.value,
+            document_id=invitation.document_id,
+        )
     else:
         await invitation_service.decline_invitation(db, invitation)
-        return {
-            "success": True,
-            "message": "Invitation declined",
-        }
+        return InvitationActionResult(
+            success=True,
+            message="Invitation declined",
+        )
 
 
-@router.delete("/{invitation_id}")
+@router.delete("/{invitation_id}", response_model=InvitationActionResult)
 async def cancel_invitation(
     invitation_id: UUID,
     current_user: CurrentUser,
@@ -264,4 +265,7 @@ async def cancel_invitation(
             detail="Cannot cancel invitation. It may have already been responded to.",
         )
     
-    return {"success": True, "message": "Invitation cancelled"}
+    return InvitationActionResult(
+        success=True,
+        message="Invitation cancelled",
+    )

@@ -14,6 +14,8 @@ from app.schemas.auth import (
     GoogleAuthURL,
     TokenResponse,
     RefreshTokenRequest,
+    LogoutResponse,
+    CurrentUserInfo,
 )
 from app.services.auth import auth_service
 
@@ -132,7 +134,7 @@ async def refresh_tokens(
     )
 
 
-@router.post("/logout")
+@router.post("/logout", response_model=LogoutResponse)
 async def logout(
     request: RefreshTokenRequest,
     current_user: CurrentUser,
@@ -143,10 +145,13 @@ async def logout(
     """
     revoked = await auth_service.revoke_refresh_token(db, request.refresh_token)
     
-    return {"success": revoked, "message": "Logged out successfully"}
+    return LogoutResponse(
+        success=revoked,
+        message="Logged out successfully" if revoked else "Refresh token not found",
+    )
 
 
-@router.post("/logout/all")
+@router.post("/logout/all", response_model=LogoutResponse)
 async def logout_all_devices(
     current_user: CurrentUser,
     db: DbSession,
@@ -156,23 +161,23 @@ async def logout_all_devices(
     """
     count = await auth_service.revoke_all_user_tokens(db, current_user.id)
     
-    return {
-        "success": True,
-        "message": f"Logged out from {count} devices",
-        "devices_logged_out": count,
-    }
+    return LogoutResponse(
+        success=True,
+        message=f"Logged out from {count} devices",
+        devices_logged_out=count,
+    )
 
 
-@router.get("/me")
+@router.get("/me", response_model=CurrentUserInfo)
 async def get_current_user_info(current_user: CurrentUser):
     """
     Get current authenticated user's information.
     """
-    return {
-        "id": str(current_user.id),
-        "email": current_user.email,
-        "display_name": current_user.display_name,
-        "avatar_url": current_user.avatar_url,
-        "created_at": current_user.created_at.isoformat(),
-        "last_login_at": current_user.last_login_at.isoformat() if current_user.last_login_at else None,
-    }
+    return CurrentUserInfo(
+        id=current_user.id,
+        email=current_user.email,
+        display_name=current_user.display_name,
+        avatar_url=current_user.avatar_url,
+        created_at=current_user.created_at,
+        last_login_at=current_user.last_login_at,
+    )
