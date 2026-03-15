@@ -15,6 +15,7 @@ from app.routers import (
     users_router,
     documents_router,
     invitations_router,
+    realtime_router,
 )
 
 settings = get_settings()
@@ -87,6 +88,12 @@ app.include_router(
     invitations_router,
     prefix="/invitations",
     tags=["Invitations"],
+)
+
+app.include_router(
+    realtime_router,
+    prefix="",
+    tags=["Realtime"],
 )
 
 
