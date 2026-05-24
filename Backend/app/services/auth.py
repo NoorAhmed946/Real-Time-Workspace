@@ -5,6 +5,7 @@ import hashlib
 import secrets
 from datetime import datetime, timedelta, timezone
 from typing import Optional
+from urllib.parse import urlencode
 from uuid import UUID
 
 import httpx
@@ -112,8 +113,7 @@ class AuthService:
             "prompt": "consent",
             "state": state,
         }
-        query_string = "&".join(f"{k}={v}" for k, v in params.items())
-        return f"{self.GOOGLE_AUTH_URL}?{query_string}"
+        return f"{self.GOOGLE_AUTH_URL}?{urlencode(params)}"
 
     async def exchange_google_code(self, code: str) -> dict:
         """

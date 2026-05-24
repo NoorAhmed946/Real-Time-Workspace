@@ -1,28 +1,24 @@
-from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession, async_sessionmaker
-from dotenv import load_dotenv
-import os
+from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 
-# Load environment variables
-load_dotenv(dotenv_path=os.path.join(os.path.dirname(__file__), '..', '.env'))
+from app.config import get_settings
 
-DATABASE_URL = os.getenv("DATABASE_URL")
+settings = get_settings()
 
-# Create async engine
+# Async engine requires postgresql+asyncpg:// (not psycopg2)
 engine = create_async_engine(
-    DATABASE_URL,
-    echo=True,  # Set to False in production
+    settings.async_database_url,
+    echo=settings.DEBUG,
     pool_size=5,
-    max_overflow=10
+    max_overflow=10,
 )
 
-# Create async session factory
 async_session = async_sessionmaker(
     engine,
     class_=AsyncSession,
-    expire_on_commit=False
+    expire_on_commit=False,
 )
 
-# Dependency to get database session
+
 async def get_db():
     async with async_session() as session:
         try:

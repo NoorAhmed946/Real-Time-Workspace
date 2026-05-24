@@ -60,6 +60,9 @@ class Settings(BaseSettings):
     
     # CORS Origins (comma-separated in env, parsed to list)
     CORS_ORIGINS: List[str] = ["http://localhost:3000", "http://localhost:5173"]
+
+    # Frontend URL for OAuth redirect after successful login
+    FRONTEND_URL: str = "http://localhost:3000"
     
     # WebSocket Settings
 

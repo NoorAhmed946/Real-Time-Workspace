@@ -8,7 +8,8 @@ env/
 
 # --- Environment Variables (CRITICAL) ---
 .env
-
+backend/.env
+frontend/.env
 # --- Database & OS ---
 *.db
 *.sqlite3
@@ -20,3 +21,7 @@ node_modules/
 dist/
 build/
 .next/
+coverage/
+.DS_Store
+*.log
+!.env.example

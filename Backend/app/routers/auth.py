@@ -2,6 +2,7 @@
 Authentication routes for Google OAuth 2.0.
 """
 from typing import Optional
+from urllib.parse import urlencode
 
 from fastapi import APIRouter, Depends, HTTPException, Request, status
 from fastapi.responses import RedirectResponse
@@ -88,16 +89,30 @@ async def google_callback(
             user_agent=user_agent,
         )
         
-        return TokenResponse(
+        token_response = TokenResponse(
             access_token=access_token,
             refresh_token=refresh_token,
             expires_in=settings.JWT_EXPIRATION_MINUTES * 60,
         )
+
+        # Redirect SPA to frontend with tokens in query (dev-friendly flow)
+        params = urlencode(
+            {
+                "access_token": token_response.access_token,
+                "refresh_token": token_response.refresh_token,
+                "expires_in": str(token_response.expires_in),
+            }
+        )
+        return RedirectResponse(
+            url=f"{settings.FRONTEND_URL}/auth/callback?{params}",
+            status_code=status.HTTP_302_FOUND,
+        )
         
     except Exception as e:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"Failed to authenticate with Google: {str(e)}",
+        error_params = urlencode({"error": str(e)})
+        return RedirectResponse(
+            url=f"{settings.FRONTEND_URL}/auth/callback?{error_params}",
+            status_code=status.HTTP_302_FOUND,
         )
 
 

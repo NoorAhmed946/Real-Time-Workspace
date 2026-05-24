@@ -1,6 +1,8 @@
 """
 Invitation service handling document sharing invitations.
 """
+import hashlib
+import secrets
 from datetime import datetime, timedelta, timezone
 from typing import List, Optional, Tuple
 from uuid import UUID
@@ -24,6 +26,10 @@ class InvitationService:
     
     # Default invitation expiration (7 days)
     INVITATION_EXPIRE_DAYS = 7
+
+    @staticmethod
+    def _hash_token(token: str) -> str:
+        return hashlib.sha256(token.encode()).hexdigest()
 
     # ==================
     # Create Invitation
@@ -70,7 +76,9 @@ class InvitationService:
             await db.refresh(existing)
             return existing
         
-        # Create new invitation
+        # Create new invitation (token_hash required by schema; UI uses invitation id)
+        token_hash = self._hash_token(secrets.token_urlsafe(32))
+
         invitation = Invitation(
             document_id=document_id,
             invited_by_id=invited_by_id,
@@ -79,6 +87,7 @@ class InvitationService:
             role=role,
             message=message,
             status=InvitationStatus.PENDING,
+            token_hash=token_hash,
             expires_at=datetime.now(timezone.utc) + timedelta(days=expire_days),
         )
         db.add(invitation)

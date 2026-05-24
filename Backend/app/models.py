@@ -112,6 +112,7 @@ class User(Base):
     )
     permissions: Mapped[List["DocumentPermission"]] = relationship(
         "DocumentPermission",
+        foreign_keys="DocumentPermission.user_id",
         back_populates="user",
         cascade="all, delete-orphan",
         lazy="selectin"
