@@ -1,0 +1,62 @@
+@import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Manrope:wght@400;500;700;800&display=swap');
+
+@theme {
+  --font-headline: "Manrope", ui-sans-serif, system-ui, sans-serif;
+  --font-body: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-label: "Inter", ui-sans-serif, system-ui, sans-serif;
+
+  --color-primary: #0059bb;
+  --color-primary-container: #0070ea;
+  --color-on-primary: #ffffff;
+  --color-on-primary-container: #fefcff;
+  
+  --color-secondary: #405e96;
+  --color-secondary-container: #a4c1ff;
+  
+  --color-tertiary: #9e3d00;
+  --color-tertiary-fixed: #ffdbcc;
+  --color-on-tertiary-fixed: #351000;
+
+  --color-surface: #f8f9fa;
+  --color-surface-container-low: #f3f4f5;
+  --color-surface-container-high: #e7e8e9;
+  --color-surface-container-highest: #e1e3e4;
+  --color-surface-container-lowest: #ffffff;
+  
+  --color-on-surface: #191c1d;
+  --color-on-surface-variant: #414754;
+  --color-outline: #717786;
+  --color-outline-variant: rgba(113, 119, 134, 0.15);
+
+  --color-error: #ba1a1a;
+  --color-error-container: #ffdad6;
+  --color-on-error: #ffffff;
+  --color-on-error-container: #93000a;
+
+  --radius-xl: 0.75rem;
+  --radius-2xl: 1rem;
+  
+  --shadow-editorial: 0 12px 40px rgba(25, 28, 29, 0.06);
+}
+
+@layer base {
+  body {
+    @apply bg-surface text-on-surface font-body antialiased;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-headline tracking-tight;
+  }
+}
+
+@layer components {
+  .jewel-button {
+    @apply bg-gradient-to-br from-primary to-primary-container text-on-primary font-label font-bold rounded-lg shadow-editorial transition-all active:scale-95 hover:opacity-90;
+  }
+  
+  .glass-panel {
+    @apply bg-surface-container-lowest/80 backdrop-blur-xl border border-outline-variant shadow-editorial;
+  }
+}
+
