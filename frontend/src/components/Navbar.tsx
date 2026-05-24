@@ -9,18 +9,35 @@ export default function Navbar() {
   const location = useLocation();
   const navigate = useNavigate();
   const { user, logout } = useAuth();
+  const [scrolled, setScrolled] = React.useState(false);
+
+  React.useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 15);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   const isAuthPage = ['/login', '/auth/callback', '/signing-in'].includes(location.pathname);
   const showAppNav = isAuthenticated() && !isAuthPage;
+  const isLanding = location.pathname === '/';
 
   const handleLogout = async () => {
     await logout();
     navigate('/login');
   };
 
+  const navBackgroundClass = isLanding
+    ? (scrolled
+        ? 'bg-[#03060f]/80 backdrop-blur-md border-b border-slate-900 shadow-lg shadow-black/20'
+        : 'bg-transparent border-b border-transparent')
+    : 'bg-surface/85 backdrop-blur-md shadow-sm border-b border-outline-variant/15';
+
   return (
-    <nav className="fixed top-0 left-0 w-full flex items-center justify-between px-6 py-3 h-16 bg-slate-50/80 backdrop-blur-xl z-50 shadow-sm">
+    <nav className={`fixed top-0 left-0 w-full flex items-center justify-between px-6 py-3 h-16 z-50 transition-all duration-300 ${navBackgroundClass}`}>
       <div className="flex items-center gap-8">
-        <Link to={showAppNav ? '/documents' : '/'} className="font-headline text-xl font-black tracking-tighter text-slate-900">
+        <Link to={showAppNav ? '/documents' : '/'} className={`font-headline text-xl font-black tracking-tighter hover:opacity-90 transition-opacity ${isLanding ? 'text-white' : 'text-slate-900'}`}>
           SyncLayer
         </Link>
         {showAppNav && (
@@ -38,7 +55,7 @@ export default function Navbar() {
         )}
       </div>
 
-      {showAppNav && (
+      {showAppNav ? (
         <div className="flex items-center gap-4">
           <div className="hidden md:flex items-center px-3 py-1.5 bg-slate-100 rounded-lg">
             <Search className="w-4 h-4 text-outline mr-2" />
@@ -78,12 +95,23 @@ export default function Navbar() {
             </button>
           </div>
         </div>
-      )}
-
-      {isAuthPage && location.pathname === '/login' && (
-        <Link to="/login" className="px-5 py-2 jewel-button text-sm">
-          Login
-        </Link>
+      ) : (
+        !isAuthPage && (
+          <div className="flex items-center gap-4">
+            <Link
+              to="/login"
+              className={`text-sm font-semibold font-label transition-colors ${isLanding ? 'text-slate-300 hover:text-white' : 'text-slate-600 hover:text-slate-900'}`}
+            >
+              Log In
+            </Link>
+            <Link
+              to="/login"
+              className="px-5 py-2.5 bg-primary text-on-primary hover:bg-primary-container text-sm font-bold font-label rounded-xl shadow-editorial transition-all hover:scale-[1.02] active:scale-95"
+            >
+              Get Started
+            </Link>
+          </div>
+        )
       )}
     </nav>
   );
