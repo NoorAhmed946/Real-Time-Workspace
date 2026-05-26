@@ -190,6 +190,26 @@ export async function createDocument(data: {
   });
 }
 
+export async function updateDocument(
+  documentId: string,
+  data: { title?: string; description?: string; is_archived?: boolean; is_public?: boolean },
+): Promise<Document> {
+  return apiRequest<Document>(`/documents/${documentId}`, {
+    method: 'PATCH',
+    body: JSON.stringify(data),
+  });
+}
+
+export async function deleteDocument(
+  documentId: string,
+  permanent = false,
+): Promise<{ status: string; message: string }> {
+  const qs = permanent ? '?permanent=true' : '';
+  return apiRequest<{ status: string; message: string }>(`/documents/${documentId}${qs}`, {
+    method: 'DELETE',
+  });
+}
+
 // --- Invitations ---
 
 export async function listReceivedInvitations(): Promise<InvitationWithDetails[]> {
